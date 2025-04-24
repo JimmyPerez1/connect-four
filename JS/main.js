@@ -15,12 +15,9 @@ const msgEl = document.querySelector('h1')
 const playAgainBtn = document.getElementById('play-again')
 const markerEls = [...document.querySelectorAll('#markers > div')];
 
-
-
-
 /*----- event listeners -----*/
 document.getElementById('markers').addEventListener('click', handleDrop)
-
+playAgainBtn.addEventListener('click', init)
 /*----- functions -----*/
 init();
 
@@ -54,20 +51,25 @@ function handleDrop(evt) {
 };
 
 function getWinner(colIdx, rowIdx) {
-  return checkVertical(colIdx, rowIdx)
+  return checkVertical(colIdx, rowIdx) || checkHorizontal (colIdx, rowIdx);
 };
 
 function checkVertical(colIdx, rowIdx) {
   const numBelow = countAdjacent(colIdx, rowIdx, 0, -1);
-  
   return numBelow === 3 ? turn : null
+};
+
+function checkHorizontal(colIdx, rowIdx) {
+  const numLeft = countAdjacent(colIdx, rowIdx, -1, 0);
+  const numRight = countAdjacent(colIdx, rowIdx, 1, 0);
+  return numLeft + numRight >= 3 ? turn : null
 };
 
 function countAdjacent(colIdx, rowIdx, colDelta, rowDelta) {
   let count = 0; 
   colIdx += colDelta;
   rowIdx += rowDelta;
-  while (board[colIdx][rowIdx] === turn) {
+  while (board[colIdx] && board[colIdx][rowIdx] === turn) {
     count++;
     colIdx += colDelta;
     rowIdx += rowDelta;
@@ -81,12 +83,9 @@ function render () {
   renderControls();
 };
 
-
 function renderControls() {
   playAgainBtn.style.visibility =  winner ? 'visible' : 'hidden'
 };
-
-
 
 function renderMessage() {
   if (winner === null) {
@@ -97,9 +96,6 @@ function renderMessage() {
     msgEl.innerHTML = `<span style="color: ${COLORS[winner]}">${COLORS[winner].toUpperCase()}</span>Wins!`;
   }
 };
-
-
-
 
 function renderBoard() {
   board.forEach((colArr, colIdx) => {
