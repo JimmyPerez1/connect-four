@@ -12,9 +12,14 @@ let turn;
 
 /*----- cached elements  -----*/
 const msgEl = document.querySelector('h1')
+const playAgainBtn = document.getElementById('play-again')
+const markerEls = [...document.querySelectorAll('#markers > div')];
+
+
+
 
 /*----- event listeners -----*/
-
+document.getElementById('markers').addEventListener('click', handleDrop)
 
 /*----- functions -----*/
 init();
@@ -34,15 +39,46 @@ function init() {
     render();
 }
 
+function handleDrop(evt) {
+  console.log(evt.target)
+  const colIdx= markerEls.indexOf(evt.target);
+  
+  if (colIdx === -1) return;
+  const colArr = board [colIdx]
+  const rowIdx = colArr.indexOf(null);
+  colArr[rowIdx] = turn;
+  winner = getWinner();
+  turn *= -1;
+
+  render();
+}
+
+function getWinner() {
+  return null
+}
+
 function render () {
   renderBoard();
   renderMessage();
+  renderControls();
 };
 
 
+function renderControls() {
+  playAgainBtn.style.visibility =  winner ? 'visible' : 'hidden'
+};
+
+
+
 function renderMessage() {
-  msgEl.innerHTML = '<span>${COLORS[turn]}</span>'
-}
+  if (winner === null) {
+    msgEl.innerHTML = `<span style="color: ${COLORS[turn]}">${COLORS[turn].toUpperCase()}</span>'s Turn`;
+  } else if (winner === 'Tie') {
+    msgEl.innerHTML = "It's a Tie!"
+  } else {
+    msgEl.innerHTML = `<span style="color: ${COLORS[winner]}">${COLORS[winner].toUpperCase()}</span>Wins!`;
+  }
+};
 
 
 
