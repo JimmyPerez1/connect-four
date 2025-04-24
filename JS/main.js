@@ -51,7 +51,8 @@ function handleDrop(evt) {
 };
 
 function getWinner(colIdx, rowIdx) {
-  return checkVertical(colIdx, rowIdx) || checkHorizontal (colIdx, rowIdx);
+  return checkVertical(colIdx, rowIdx) || checkHorizontal (colIdx, rowIdx) || 
+  checkBackslash(colIdx, rowIdx) || checkForwardslash(colIdx, rowIdx);
 };
 
 function checkVertical(colIdx, rowIdx) {
@@ -62,6 +63,18 @@ function checkVertical(colIdx, rowIdx) {
 function checkHorizontal(colIdx, rowIdx) {
   const numLeft = countAdjacent(colIdx, rowIdx, -1, 0);
   const numRight = countAdjacent(colIdx, rowIdx, 1, 0);
+  return numLeft + numRight >= 3 ? turn : null
+};
+
+function checkBackslash(colIdx, rowIdx) {
+  const numLeft = countAdjacent(colIdx, rowIdx, -1, 1);
+  const numRight = countAdjacent(colIdx, rowIdx, 1, -1);
+  return numLeft + numRight >= 3 ? turn : null
+};
+
+function checkForwardslash(colIdx, rowIdx) {
+  const numLeft = countAdjacent(colIdx, rowIdx, -1, -1);
+  const numRight = countAdjacent(colIdx, rowIdx, 1, 1);
   return numLeft + numRight >= 3 ? turn : null
 };
 
@@ -85,6 +98,10 @@ function render () {
 
 function renderControls() {
   playAgainBtn.style.visibility =  winner ? 'visible' : 'hidden'
+  markerEls.forEach((markerEl, colIdx) => {
+    const showMarker = board[colIdx].includes(null) && !winner;
+    markerEl.style.visibility = showMarker ? 'visible' : 'hidden';
+  })
 };
 
 function renderMessage() {
