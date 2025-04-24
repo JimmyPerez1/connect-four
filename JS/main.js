@@ -37,7 +37,7 @@ function init() {
     winner = null;
     turn = 1;
     render();
-}
+};
 
 function handleDrop(evt) {
   console.log(evt.target)
@@ -47,15 +47,33 @@ function handleDrop(evt) {
   const colArr = board [colIdx]
   const rowIdx = colArr.indexOf(null);
   colArr[rowIdx] = turn;
-  winner = getWinner();
+  winner = getWinner(colIdx, rowIdx);
   turn *= -1;
 
   render();
-}
+};
 
-function getWinner() {
-  return null
-}
+function getWinner(colIdx, rowIdx) {
+  return checkVertical(colIdx, rowIdx)
+};
+
+function checkVertical(colIdx, rowIdx) {
+  const numBelow = countAdjacent(colIdx, rowIdx, 0, -1);
+  
+  return numBelow === 3 ? turn : null
+};
+
+function countAdjacent(colIdx, rowIdx, colDelta, rowDelta) {
+  let count = 0; 
+  colIdx += colDelta;
+  rowIdx += rowDelta;
+  while (board[colIdx][rowIdx] === turn) {
+    count++;
+    colIdx += colDelta;
+    rowIdx += rowDelta;
+  }
+  return count;
+};
 
 function render () {
   renderBoard();
